@@ -6,9 +6,37 @@ from django.apps import apps
 import hmac, base64, hashlib, binascii, os
 import shopify
 
-def _new_session(shop_url):
+def custom_app_login(request):
+    # get store details
+    shop_url = apps.get_app_config('shopify_app').SHOP_URL
+    admin_api_key = apps.get_app_config('shopify_app').TOKEN 
+    
+    try:
+        session = _new_session(shop_url, admin_api_key)
+        request.session['shopify'] = {
+            "shop_url": shop_url,
+            "access_token": admin_api_key
+        }
+        shopify.ShopifyResource.activate_session(session)
+    except Exception:
+        messages.error(request, "Could not log in to Shopify store.")
+        #return something...
+    messages.info(request, "Logged in to shopify store.")
+    request.session.pop('return_to', None)
+    return redirect(request.session.get('return_to', reverse('root_path'))) 
+    
+ 
+
+def _new_session(shop_url,admin_api_key):
+    # get store details
+    api_version = apps.get_app_config('shopify_app').SHOPIFY_API_VERSION
+    # create session
+    session = shopify.Session(shop_url, api_version, admin_api_key)
+    return session
+    """
     api_version = apps.get_app_config('shopify_app').SHOPIFY_API_VERSION
     return shopify.Session(shop_url, api_version)
+
 
 # Ask user for their ${shop}.myshopify.com address
 def login(request):
@@ -68,3 +96,4 @@ def logout(request):
     request.session.pop('shopify', None)
     messages.info(request, "Successfully logged out.")
     return redirect(reverse(login))
+"""
