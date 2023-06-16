@@ -1,13 +1,13 @@
 from django.shortcuts import render
 import shopify
-from shopify_app.decorators import shop_login_required
+#from shopify_app.decorators import shop_login_required
 import requests
 from django.apps import apps
-from django.http import JsonResponse
-import ssl
+# import ssl -> in case it doesn't work
+import json
 
 
-@shop_login_required
+#shop_login_required
 def index(request):
     shop_url = apps.get_app_config('shopify_app').SHOP_URL
     admin_api_key = apps.get_app_config('shopify_app').TOKEN
@@ -26,18 +26,25 @@ def index(request):
         }
     }
     '''
-    ssl._create_default_https_context = ssl._create_unverified_context
+
+    # ssl._create_default_https_context = ssl._create_unverified_context
     #data = query_shopify(data_query, admin_api_key)
     shop_url = apps.get_app_config('shopify_app').SHOP_URL
     admin_api_key = apps.get_app_config('shopify_app').TOKEN
     api_version = apps.get_app_config('shopify_app').SHOPIFY_API_VERSION
+
     session = shopify.Session(shop_url, api_version, admin_api_key)
     shopify.ShopifyResource.activate_session(session)
-    orders = shopify.Order.find(limit=3, order="created_at DESC")
-    products = shopify.Product.find(limit=3,order="created_at DESC")
-    return render(request, 'home/index.html', {'orders': orders, 'products':products})
-    #return render(request, 'home/yup.html', {'products': data})
-    return JsonResponse(data)
+    #items = shopify.GraphQL().execute(query=data_query)
+    
+    level = shopify.GraphQL().execute(query=inv_lev_query,
+                                      variables={"item_id":"gid://shopify/InventoryLevel/107788927204?inventory_item_id=45622422700260"})
+    #return render(result)
+    #orders = shopify.Order.find(limit=3, order="created_at DESC")
+    #products = shopify.Product.find(limit=5,order="created_at DESC")
+    #return render(request, 'home/index.html', {'products':result})
+    return render(request, 'home/yup.html', {'levels': level})
+
 def query_shopify(query, admin_api_key):
     # headers that give access to the shop 
     

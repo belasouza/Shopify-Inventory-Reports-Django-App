@@ -1,0 +1,11 @@
+fragment ItemInfo on inventoryItem {
+    id
+    available
+    incoming
+}
+
+query GetOneItemLevel($item_id){
+    node(id: $item_id){
+        ...ItemInfo
+    }
+}

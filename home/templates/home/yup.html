@@ -2,23 +2,18 @@
 {% block content %}
     <h2>You are in!!</h2>
     <h2>Some of your products</h2>
-    {% for item in products %}
+    {% if items %}
         <div class="product box">
         <div class="wrapper">
-            {% if product.images %}
-            <img src="{{ product.images.0.small }}" />
-            {% endif %}
-
-            <h4><a href="https://{{ current_shop.domain }}/admin/products/{{ product.id }}">{{ product.title }}</a></h4>
-
-            <p class="price">{{ product.price_range }} {{ current_shop.currency }}</p>
-            <p style="margin-bottom: 0">{{ product.product_type }} <span class="note">type</span></p>
-            <p style="margin: 0">{{ product.vendor }} <span class="note">vendor</span></p>
-
+            <p style="margin: 0"> {{ items }}</p>
             <div style="clear:left"></div>
         </div>
         </div>
-    {% empty %}
-        <em class="note">There are no products in your store.</em>
-    {% endfor %}
+    {% endifblock %}
+        <div class="product box">
+            <div class="wrapper">
+                <p style="margin: 0"> {{ levels }}</p>
+                <div style="clear:left"></div>
+            </div>
+            </div>
 {% endblock %}
