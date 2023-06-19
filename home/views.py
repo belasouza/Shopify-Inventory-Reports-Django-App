@@ -3,75 +3,44 @@ import shopify
 #from shopify_app.decorators import shop_login_required
 import requests
 from django.apps import apps
-from django.http import JsonResponse
 # import ssl -> in case it doesn't work
-import urllib
 import json
-import pathlib
+from inventory_query import inv_lev_query, inv_item_query
 
-
-#shop_login_required
-def index(request):
-    shop_url = apps.get_app_config('shopify_app').SHOP_URL
-    admin_api_key = apps.get_app_config('shopify_app').TOKEN
-
-    data_query = '''
-    query {
-        # Retrives the last 5 inventory items on a shop
-        inventoryItems(first: 10, reverse:true) {
-            edges {
-            node {
-                    id
-                    tracked
-                    sku
-                }
-            }
-        }
-    }
-    '''
-    inv_lev_query = '''
-    query ($item_id: ID!) {
-        inventoryLevel(id:$item_id ) {
-            id
-            available
-            incoming
-            # The quantities field takes an array of inventory states, which include the following: "incoming", "on_hand", "available", "committed", and "reserved".
-            #quantities(names: ["available","incoming"]) {
-            #  name
-            # quantity
-            #}
-            item {
-            id
-            sku
-            }
-            location {
-            id
-            }
-        }
-    }
-    '''
-    # ssl._create_default_https_context = ssl._create_unverified_context
-    #data = query_shopify(data_query, admin_api_key)
+def new_session():
+    # get session info
     shop_url = apps.get_app_config('shopify_app').SHOP_URL
     admin_api_key = apps.get_app_config('shopify_app').TOKEN
     api_version = apps.get_app_config('shopify_app').SHOPIFY_API_VERSION
 
+    return shopify.Session(shop_url, api_version, admin_api_key)
 
-    session = shopify.Session(shop_url, api_version, admin_api_key)
+def get_products():
+    all_products = []
+    attribute=getattr(shopify,object_name)
+    data=attribute.find(since_id=0,limit=250)
+    for d in data:
+        all_products.append(d)
+    while data.has_next_page():
+        data=data.next_page()
+        for d in data:
+            all_products.append(d)
+        return all_products
+
+#shop_login_required
+def index(request):
+    # ssl._create_default_https_context = ssl._create_unverified_context
+
+    # start session
+    session = new_session()
     shopify.ShopifyResource.activate_session(session)
 
-    # Load the document with both queries
-    document = pathlib.Path("home/order_queries.graphql").read_text()
-    result = shopify.GraphQL().execute()
-
-    items = shopify.GraphQL().execute(query=data_query)
-    level = shopify.GraphQL().execute(query=inv_lev_query, variables={"item_id":"gid://shopify/InventoryLevel/107788927204?inventory_item_id=45622422700260"})
+    #level = shopify.GraphQL().execute(query=inv_lev_query, variables={"item_id":"gid://shopify/InventoryLevel/107788927204?inventory_item_id=45622422700260"})
     
-    #orders = shopify.Order.find(limit=3, order="created_at DESC")
     #products = shopify.Product.find(limit=5,order="created_at DESC")
-    #return render(request, 'home/index.html', {'products':result})
-    return render(request, 'home/yup.html', {'items':items, 'levels': level})
-
+    return render(request, 'home/index.html', {})
+    #return render(request, 'home/yup.html', {'items':items, 'levels': level})
+    
 def query_shopify(query, admin_api_key):
     # headers that give access to the shop 
     
