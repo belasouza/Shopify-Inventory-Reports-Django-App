@@ -3,8 +3,11 @@ import shopify
 #from shopify_app.decorators import shop_login_required
 import requests
 from django.apps import apps
+from django.http import JsonResponse
 # import ssl -> in case it doesn't work
+import urllib
 import json
+import pathlib
 
 
 #shop_login_required
@@ -26,24 +29,48 @@ def index(request):
         }
     }
     '''
-
+    inv_lev_query = '''
+    query ($item_id: ID!) {
+        inventoryLevel(id:$item_id ) {
+            id
+            available
+            incoming
+            # The quantities field takes an array of inventory states, which include the following: "incoming", "on_hand", "available", "committed", and "reserved".
+            #quantities(names: ["available","incoming"]) {
+            #  name
+            # quantity
+            #}
+            item {
+            id
+            sku
+            }
+            location {
+            id
+            }
+        }
+    }
+    '''
     # ssl._create_default_https_context = ssl._create_unverified_context
     #data = query_shopify(data_query, admin_api_key)
     shop_url = apps.get_app_config('shopify_app').SHOP_URL
     admin_api_key = apps.get_app_config('shopify_app').TOKEN
     api_version = apps.get_app_config('shopify_app').SHOPIFY_API_VERSION
 
+
     session = shopify.Session(shop_url, api_version, admin_api_key)
     shopify.ShopifyResource.activate_session(session)
-    #items = shopify.GraphQL().execute(query=data_query)
+
+    # Load the document with both queries
+    document = pathlib.Path("home/order_queries.graphql").read_text()
+    result = shopify.GraphQL().execute()
+
+    items = shopify.GraphQL().execute(query=data_query)
+    level = shopify.GraphQL().execute(query=inv_lev_query, variables={"item_id":"gid://shopify/InventoryLevel/107788927204?inventory_item_id=45622422700260"})
     
-    level = shopify.GraphQL().execute(query=inv_lev_query,
-                                      variables={"item_id":"gid://shopify/InventoryLevel/107788927204?inventory_item_id=45622422700260"})
-    #return render(result)
     #orders = shopify.Order.find(limit=3, order="created_at DESC")
     #products = shopify.Product.find(limit=5,order="created_at DESC")
     #return render(request, 'home/index.html', {'products':result})
-    return render(request, 'home/yup.html', {'levels': level})
+    return render(request, 'home/yup.html', {'items':items, 'levels': level})
 
 def query_shopify(query, admin_api_key):
     # headers that give access to the shop 
