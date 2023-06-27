@@ -1,18 +1,39 @@
+query_status = """
+query bulkStatus($id:ID!){
+  node(id: $id) {
+    ... on BulkOperation {
+      id
+      status
+      errorCode
+      createdAt
+      completedAt
+      objectCount
+      fileSize
+      url
+      partialDataUrl
+    }
+  }
+}
+"""
 
-data_query = '''
-query {
-    # Retrives the last 5 inventory items on a shop
-    inventoryItems(first: 10, reverse:true) {
-        edges {
+#actually will need to use gql module to add the locationId correctly !!
+invItems_query = """
+{
+    inventoryItems {
+    edges {
         node {
-                id
-                tracked
-                sku
+        sku
+        inventoryLevel(locationId:"gid://shopify/Location/36462395441"){
+            quantities(names: ["available","incoming"]) {
+              name
+              quantity
             }
         }
+        }
+    }
     }
 }
-'''
+"""
 
 inv_lev_query = '''
 query ($item_id: ID!) {
@@ -36,7 +57,7 @@ query ($item_id: ID!) {
 }
 '''
 
-inv_item_query = '''
+individual_inv_levels = '''
 query($id: ID!, $loc: ID!) {
     inventoryItem(id: $id) {
         inventoryLevel(locationId: $loc){

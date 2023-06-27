@@ -1,39 +1,35 @@
+'''
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.urls import reverse
 from django.template import RequestContext
-from django.apps import apps
 import hmac, base64, hashlib, binascii, os
+'''
+from django.apps import apps
 import shopify
 
-def custom_app_login(request):
+def new_session():
+    '''
+    returns session and graphql client
+    '''
+    # add try block?
+
     # get store details
     shop_url = apps.get_app_config('shopify_app').SHOP_URL
     admin_api_key = apps.get_app_config('shopify_app').TOKEN 
-    
-    try:
-        session = _new_session(shop_url, admin_api_key)
-        request.session['shopify'] = {
-            "shop_url": shop_url,
-            "access_token": admin_api_key
-        }
-        shopify.ShopifyResource.activate_session(session)
-    except Exception:
-        messages.error(request, "Could not log in to Shopify store.")
-        #return something...
-    messages.info(request, "Logged in to shopify store.")
-    request.session.pop('return_to', None)
-    return redirect(request.session.get('return_to', reverse('root_path'))) 
-    
- 
-
-def _new_session(shop_url,admin_api_key):
-    # get store details
     api_version = apps.get_app_config('shopify_app').SHOPIFY_API_VERSION
+
     # create session
     session = shopify.Session(shop_url, api_version, admin_api_key)
-    return session
-    """
+
+    # start session
+    shopify.ShopifyResource.activate_session(session)
+    
+    # get client
+    client = shopify.GraphQL()
+    return session, client
+"""
+def _new_session(shop_url,admin_api_key):
     api_version = apps.get_app_config('shopify_app').SHOPIFY_API_VERSION
     return shopify.Session(shop_url, api_version)
 

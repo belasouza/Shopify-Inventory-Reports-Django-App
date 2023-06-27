@@ -1,12 +1,18 @@
+from django.http import StreamingHttpResponse
 from django.shortcuts import render
-import shopify
-#from shopify_app.decorators import shop_login_required
-import requests
-from django.apps import apps
 # import ssl -> in case it doesn't work
 import json
-from inventory_query import inv_lev_query, inv_item_query
+import mimetypes
+import os
+from django.http.response import HttpResponse
+from wsgiref.util import FileWrapper
 
+from shopify_app.views import new_session
+
+#from inventory_query import query_status, invItems_query
+#from fetching import fetch_bulk, bulk_operation,bulk_status, get_data, filter_data
+
+'''
 def new_session():
     # get session info
     shop_url = apps.get_app_config('shopify_app').SHOP_URL
@@ -14,39 +20,53 @@ def new_session():
     api_version = apps.get_app_config('shopify_app').SHOPIFY_API_VERSION
 
     return shopify.Session(shop_url, api_version, admin_api_key)
+'''
 
-def get_products():
-    all_products = []
-    attribute=getattr(shopify,object_name)
-    data=attribute.find(since_id=0,limit=250)
-    for d in data:
-        all_products.append(d)
-    while data.has_next_page():
-        data=data.next_page()
-        for d in data:
-            all_products.append(d)
-        return all_products
-
-#shop_login_required
 def index(request):
     # ssl._create_default_https_context = ssl._create_unverified_context
 
     # start session
-    session = new_session()
-    shopify.ShopifyResource.activate_session(session)
+    session, client = new_session()
 
-    #level = shopify.GraphQL().execute(query=inv_lev_query, variables={"item_id":"gid://shopify/InventoryLevel/107788927204?inventory_item_id=45622422700260"})
-    
-    #products = shopify.Product.find(limit=5,order="created_at DESC")
     return render(request, 'home/index.html', {})
-    #return render(request, 'home/yup.html', {'items':items, 'levels': level})
     
-def query_shopify(query, admin_api_key):
-    # headers that give access to the shop 
+def placeholder(session, client): # should i add request?
+    # get locations using that get_locs function and passing session variable
+
+    # find the one that is 'Zedaro Office'
+        # get its id
     
-    headers = {
-        'Content-Type': 'application/graphql',
-        'X-Shopify-Access-Token': f'{admin_api_key}',
-    }
-    response = requests.post(f'https://zedaro.myshopify.com/admin/api/2023-04/graphql.json', data=query, headers=headers)
-    #return response.json()
+    # create query hardcoding the location id in it
+    
+    # call the bulk_query
+
+    # call get_data (which gets the data once the status is COMPLETED)
+
+    # filter data?
+
+    # generate excel file
+        # update file_name variable??? how???
+        # 1) how to use cache
+        # 2) how to clean cache?
+
+    # generate html file
+        # this one doesn't need to be a new one everytime i guess
+    pass
+
+# from "How To Download A File On Button Click in Django Easy STEPS" - YouTube · Askari BaDshah
+# https://fedingo.com/how-to-download-file-in-django/
+def download_file(request):
+    # add way to change the file dynamically
+    # Define Django project base directory
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    # Define text file name
+    file_name = 'test.xlsx'
+    # Define the full file path
+    filepath = BASE_DIR + '/home/Files/' + file_name
+    file_name = os.path.basename(filepath)
+    chunk_size = 8192
+    response = StreamingHttpResponse(FileWrapper(open(filepath, 'rb'), chunk_size), 
+                                        content_type=mimetypes.guess_type(filepath)[0])
+    response['Content-Length'] = os.path.getsize(filepath)
+    response['Content-Disposition'] = "Attachment;filename=%s" % file_name
+    return response

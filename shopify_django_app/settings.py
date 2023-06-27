@@ -40,8 +40,6 @@ INSTALLED_APPS = [
     # local apps
     'shopify_app.apps.ShopifyAppConfig',
     'home.apps.HomeConfig',
-    # 3rd party apps
-    'graphene_django',
 ]
 
 MIDDLEWARE = [
@@ -125,8 +123,3 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
-
-# Graphene config
-GRAPHENE = {
-    'SCHEMA': 'home.schema.schema'
-}

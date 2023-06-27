@@ -1,46 +1,100 @@
 {% extends "base.html" %}
 {% block content %}
-  <div id="orders">
-    <h2>Your recent orders</h2>
-    {% if orders %}
-      <ul>
-      {% for order in orders %}
-        <li>
-          <div class="order box">
-            <div class="wrapper">
-              <strong><a href="https://{{ current_shop.domain }}/admin/orders/{{ order.id }}">{{ order.name }}</a></strong>
-              <span class="price">{{ order.total_price }} {{ order.currency }}</span>
-              <span class="highlight">{{ order.financial_status }}</span>
-              by <span class="note">{{ order.billing_address.name }}</span>
-            </div>
-          </div>
-        </li>
-      {% endfor %}
-      </ul>
-    {% else %}
-      <em class="note">There are no orders in your store.</em>
-    {% endif %}
-  </div>
-
-  <h2>Some of your products</h2>
-  {% for product in products %}
-    <div class="product box">
-      <div class="wrapper">
-        {% if product.images %}
-          <img src="{{ product.images.0.small }}" />
-        {% endif %}
-
-        <h4><a href="https://{{ current_shop.domain }}/admin/products/{{ product.id }}">{{ product.title }}</a></h4>
-
-        <p class="price">{{ product.price_range }} {{ current_shop.currency }}</p>
-        <p style="margin-bottom: 0">{{ product.product_type }} <span class="note">type</span></p>
-        <p style="margin: 0">{{ product.vendor }} <span class="note">vendor</span></p>
-        <p style="margin: 0">{{ product.attributes }} <span class="note">variants</span></p> 
-
-        <div style="clear:left"></div>
+  <section class="section is-small">
+    <h2 class="title has-background-light	has-text-black">Incoming items</h2>
+    <!--div class ="box">There are no products in your store.</div-->
+    <div class="block ">
+      <div class="columns is-variable is-1">
+        <div class="column is-one-fifth">
+          <span class="tag is-info is-light">
+            Last updated on June 25th, 2023
+          </span>
+        </div>
+        <!-- START of columns to make it align-->
+        <div class="column is-half">
+          <p> </p>
+        </div>
+        <div class="column is-1">
+          <p> </p>
+        </div>
+        <!-- END of columns to make it align-->
+        <div class="column">
+          <button class="button is-light has-text-black">Update</button>
+        </div>
+        <div class="column">
+          <a href="download_file"><button class="button is-success">Export</button></a>
+        </div>
+        
       </div>
+      
     </div>
-  {% empty %}
-    <em class="note">There are no products in your store.</em>
-  {% endfor %}
+    <div class="box">
+      <div class="table-container">
+        <table class="table is-hoverable is-fullwidth">
+          <thead>
+            <tr>
+              <th>SKU</th>
+              <th>Incoming</th>
+              <th>Available</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th>SKU_1</th>
+              <td>10</td>
+              <td>0</td>
+            </tr>
+            <tr>
+              <th>SKU_2</th>
+              <td>0</td>
+              <td>7</td>
+            </tr>
+            <tr>
+              <th>SKU_3</th>
+              <td>5</td>
+              <td>1</td>
+            </tr>
+            <tr>
+              <th>SKU_4</th>
+              <td>2</td>
+              <td>100</td>
+            </tr>
+            <tr>
+              <th>SKU_4</th>
+              <td>0</td>
+              <td>0</td>
+            </tr>
+            <tr>
+              <th>SKU_1</th>
+              <td>10</td>
+              <td>0</td>
+            </tr>
+            <tr>
+              <th>SKU_2</th>
+              <td>0</td>
+              <td>7</td>
+            </tr>
+            <tr>
+              <th>SKU_3</th>
+              <td>5</td>
+              <td>1</td>
+            </tr>
+            <tr>
+              <th>SKU_4</th>
+              <td>2</td>
+              <td>100</td>
+            </tr>
+            <tr>
+              <th>SKU_4</th>
+              <td>0</td>
+              <td>0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </table></div>
+  </section>
+  <section class="section is-medium">
+
+  </section>
 {% endblock %}

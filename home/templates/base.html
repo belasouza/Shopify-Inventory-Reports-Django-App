@@ -1,31 +1,23 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>{% block title %}Shopify Application{% endblock %}</title>
-  <link href="/static/stylesheets/application.css" media="screen" rel="stylesheet" type="text/css" />
+  <meta name="viewport" content="width=device-width, initial-scale = 1">
+  <title>{% block title %}Inventory Reports{% endblock %}</title>
+  <!-- Include the Bulma CSS framework for styling -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
 </head>
-<body>
-  <div id="header">
-    <h1><a href="{% url "root_path" %}">Shopify Demo Application</a></h1>
-    <p id="login-link">
-      {% if current_shop %}
-          <span class="note">current shop</span> <a href="https://{{ current_shop.domain }}" class="shop_name">{{ current_shop.domain }}</a> <span class="note">|</span>
-          
-      {% endif %}
-    </p>
-  </div>
-  <div id="container" class="clearfix">
-    <!-- Flash error & notice-->
-    {% if messages %}
-      {% for message in messages %}
-      <div{% if message.tags %} class="{{ message.tags }}-message"{% endif %}>{{ message }}</div>
-      {% endfor %}
-    {% endif %}
+<body class="has-background-light">
+    <section class="hero is-small is-success mb-4" >
+        <div class="hero-body ">
+            <p class="title is-4"><a href="{% url "root_path" %}">Inventory Reports</a></p>
+        </div>
+    </section>
     <!-- begin div.main-->
-    <div id="main">
-      {% block content %}{% endblock %}
-    </div>
+    <div class="container">
+
+        {% block content %}
+        {% endblock %}
     <!-- end div.main -->
-  </div>
+
 </body>
 </html>
