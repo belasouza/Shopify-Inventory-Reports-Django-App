@@ -27,7 +27,7 @@ def new_session():
     
     # get client
     client = shopify.GraphQL()
-    return session, client
+    return client
 """
 def _new_session(shop_url,admin_api_key):
     api_version = apps.get_app_config('shopify_app').SHOPIFY_API_VERSION

@@ -1,3 +1,12 @@
+checking_status = """
+{
+  currentBulkOperation {
+    status
+    objectCount
+    url
+  }
+}
+"""
 query_status = """
 query bulkStatus($id:ID!){
   node(id: $id) {
