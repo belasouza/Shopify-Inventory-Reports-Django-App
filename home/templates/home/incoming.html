@@ -7,7 +7,7 @@
       <div class="columns is-variable is-1">
         <div class="column is-one-fifth">
           <span class="tag is-info is-light">
-            Last updated on June 25th, 2023
+            Last updated on Month XXth, 2023
           </span>
         </div>
         <!-- START of columns to make it align-->
@@ -19,7 +19,7 @@
         </div>
         <!-- END of columns to make it align-->
         <div class="column">
-          <button class="button is-light has-text-black">Update</button>
+          <a href="update_page"><button class="button is-light has-text-black">Update</button></a>
         </div>
         <div class="column">
           <a href="download_file"><button class="button is-success">Export</button></a>
@@ -30,12 +30,8 @@
     </div>
     <div class="box">
       <div class="table-container">
-       {{ html_table|safe }}
-      </div>
-    </div>
-    <div class="box">
-      <div class="table-container">
         <table class="table is-hoverable is-fullwidth">
+          {% if items %}
           <thead>
             <tr>
               <th>SKU</th>
@@ -43,27 +39,17 @@
               <th>Available</th>
             </tr>
           </thead>
-          <tbody>
-            <tr>
-              <th>SKU_1</th>
-              <td>10</td>
-              <td>0</td>
-            </tr>
-            <tr>
-              <th>SKU_2</th>
-              <td>0</td>
-              <td>7</td>
-            </tr>
-            <tr>
-              <th>SKU_3</th>
-              <td>5</td>
-              <td>1</td>
-            </tr>
-            <tr>
-              <th>SKU_4</th>
-              <td>2</td>
-              <td>100</td>
-            </tr>
+          <tbody>           
+              {% for item in items %}
+              <tr>
+                <th>{{ item.sku }}</th>
+                <td>{{ item.incoming }}</td>
+                <td>{{ item.available }}</td>
+              </tr>
+              {% endfor %}
+            {% else %}
+              <strong>No data found, please update items list.</strong>
+            {% endif %}
           </tbody>
         </table>
       </div>

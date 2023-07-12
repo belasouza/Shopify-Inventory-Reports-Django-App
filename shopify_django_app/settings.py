@@ -81,7 +81,7 @@ WSGI_APPLICATION = 'shopify_django_app.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'inventoryInfo.db'),
+        'NAME': os.path.join(BASE_DIR, 'inventory.db'),
     }
 }
 

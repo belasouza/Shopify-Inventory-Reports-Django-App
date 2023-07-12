@@ -1,12 +1,13 @@
 from time import sleep
 from django.http import StreamingHttpResponse
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 # import ssl -> in case it doesn't work
 import json
 import mimetypes
 import os
 from django.http.response import HttpResponse
 from wsgiref.util import FileWrapper
+from home.models import Item
 
 from shopify_app.views import new_session
 
@@ -34,18 +35,21 @@ def new_session():
 def index(request):
     # ssl._create_default_https_context = ssl._create_unverified_context
 
+    
+
+    items = Item.objects.all() 
+    return render(request, 'home/incoming.html', {"items": items})
+
+
+def update_page(request):
     # start session
-    client = new_session()
-    #table = placeholder(client)
+#    client = new_session()
+#    items = placeholder(client)
+#    update_database(items)
     
-    return render(request, 'home/index.html', {})
-
-
-def update_page(request, client):
-
-    table = placeholder(client)
-    
-    return render(request, 'home/index.html', {'html_table': table}) 
+    return redirect(index)
+    items = Item.objects.all()
+    return render(request, 'home/incoming.html', {"items": items }) 
 
    
 def placeholder(client): # should i add request?
@@ -76,16 +80,45 @@ def placeholder(client): # should i add request?
         data = filter_data(data)
         logging.info(data)
     # generate excel file -> df to xlsx
-    
-        # update table
-        
-
+          
+        # update table       
+    return data
     # generate html table
     #    html_table = get_html_table(data)
     #    logging.info(html_table)
 
     #return html_table
 
+def get_item(s):
+    try:
+        found = Item.objects.get(sku=s)
+        return found
+    except Item.DoesNotExist:
+        return False
+
+def update_database(data):
+    new_items = []
+    for i,row in data.iterrows():
+        item = get_item(row['SKU'])
+        if item:
+            logging.info("Updating...")
+            item.incoming = int(row['Incoming'])
+            item.available = int(row['Available'])
+            item.save()
+        else: # need to add it to database
+            # add to tmp list
+            logging.info("Item needs to be added")
+            new_items.append(row)
+
+    if len(new_items) != 0: # if there are items to add
+        for item in new_items:
+            logging.info("Adding...")
+            new = Item.objects.create_item(item['SKU'],item['Incoming'], item['Available']) 
+            new.save()
+            logging.info("Added" + new.sku)
+    
+    
+            
 def get_html_table(df):
     t = df.to_html(classes="table is-hoverable is-fullwidth")
     t_1 = t.replace('border="1" class="dataframe', 'class="')

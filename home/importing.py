@@ -1,6 +1,6 @@
 import sqlite3 as lite
 import pandas as pd
-import logging
+#import logging
 #from django.conf import settings
 #fmt = getattr(settings, 'LOG_FORMAT', None)
 #lvl = getattr(settings, 'LOG_LEVEL', logging.INFO)
