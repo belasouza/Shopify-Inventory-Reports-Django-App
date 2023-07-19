@@ -5,39 +5,82 @@
   <title>{% block title %}Inventory Reports{% endblock %}</title>
   <!-- Include the Bulma CSS framework for styling -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
-</head>
+
 <style>
-    .loader-wrapper {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
-  background: #fff;
-  opacity: 0;
-  z-index: -1;
-  transition: opacity 0.3s;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 6px;
-
-  .loader {
-    height: 80px;
-    width: 80px;
+  /* Card styles */
+  .card{
+      background-color: #fff;
+      height: auto; /* auto */
+      width: auto;
+      overflow: hidden;
+      margin: 12px;
+      border-collapse:collapse;
+      border-spacing:0;
+      box-shadow: 9px 17px 45px -29px
+                  rgba(0, 0, 0, 0.44);
   }
 
-  &.is-active {
-    opacity: 1;
-    z-index: 1;
+  /* Card image loading */
+  .card__image img {
+      width: 100%;
+      height: 100%;
   }
-}
+    
+  .card__image.loading {
+      height: 300px;
+      width: 400px;
+  }
+
+  /* Card title */
+  .card__title {
+      padding: 8px;
+      font-size: 14px;
+      font-weight: 700;
+  }
+    
+  .card__title.loading {
+      height: auto;
+      width: 100%;
+      margin: auto;
+  }
+
+
+  /* The loading Class */
+  .loading {
+      position: relative;
+      background-color: #e2e2e2;
+  }
+
+  /* The moving element */
+  .loading::after {
+      display: block;
+      content: "";
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      transform: translateX(-100%);
+      background: -webkit-gradient(linear, left top,
+                  right top, from(transparent), 
+                  color-stop(rgba(255, 255, 255, 0.2)),
+                  to(transparent));
+                    
+      background: linear-gradient(90deg, transparent,
+              rgba(255, 255, 255, 0.2), transparent);
+
+      /* Adding animation */
+      animation: loading 0.8s infinite;
+  }
+
+  /* Loading Animation */
+  @keyframes loading {
+      100% {
+          transform: translateX(100%);
+      }
+  }
 </style>
-<script>
-    function fun(){
-        $('.loader-wrapper').addClass('is-active');
-    }
-</script>
+</head>
+
+
 <body class="has-background-light">
     <section class="hero is-small is-success mb-4" >
         <div class="hero-body ">
@@ -81,13 +124,110 @@
     <div class="box">
         <div class="table-container">
             <!--progress class="progress is-large is-info" max="100">60%</progress-->
-            <div class="loader-wrapper">
-                <div class="loader is-loading"></div>
+            <div class="columns is-variable is-1">
+              <div class="column is-third">
+                <div class="card">
+                  <div class="card__title loading"></div>
+                </div>
+              </div>
+              <div class="column is-third">
+                <div class="card">
+                  <div class="card__title loading"></div>
+                </div>
+              </div> 
+              <div class="column is-third">
+                <div class="card">
+                  <div class="card__title loading"></div>
+                </div>
+              </div>  
             </div>
-            <strong>No data found, please update items list.</strong>
-            <div class="has-text-centered">
-                <a class="button is-big" onclick="fun()">Call Loader</a>
+            <div class="columns is-variable is-1">
+              <div class="column is-third">
+                <div class="card">
+                  <div class="card__title loading"></div>
+                </div>
+              </div>
+              <div class="column is-third">
+                <div class="card">
+                  <div class="card__title loading"></div>
+                </div>
+              </div> 
+              <div class="column is-third">
+                <div class="card">
+                  <div class="card__title loading"></div>
+                </div>
+              </div>  
             </div>
+            <div class="columns is-variable is-1">
+              <div class="column is-third">
+                <div class="card">
+                  <div class="card__title loading"></div>
+                </div>
+              </div>
+              <div class="column is-third">
+                <div class="card">
+                  <div class="card__title loading"></div>
+                </div>
+              </div> 
+              <div class="column is-third">
+                <div class="card">
+                  <div class="card__title loading"></div>
+                </div>
+              </div>  
+            </div>
+            <div class="columns is-variable is-1">
+              <div class="column is-third">
+                <div class="card">
+                  <div class="card__title loading"></div>
+                </div>
+              </div>
+              <div class="column is-third">
+                <div class="card">
+                  <div class="card__title loading"></div>
+                </div>
+              </div> 
+              <div class="column is-third">
+                <div class="card">
+                  <div class="card__title loading"></div>
+                </div>
+              </div>  
+            </div>
+            <div class="columns is-variable is-1">
+              <div class="column is-third">
+                <div class="card">
+                  <div class="card__title loading"></div>
+                </div>
+              </div>
+              <div class="column is-third">
+                <div class="card">
+                  <div class="card__title loading"></div>
+                </div>
+              </div> 
+              <div class="column is-third">
+                <div class="card">
+                  <div class="card__title loading"></div>
+                </div>
+              </div>  
+            </div>
+            <div class="columns is-variable is-1">
+              <div class="column is-third">
+                <div class="card">
+                  <div class="card__title loading"></div>
+                </div>
+              </div>
+              <div class="column is-third">
+                <div class="card">
+                  <div class="card__title loading"></div>
+                </div>
+              </div> 
+              <div class="column is-third">
+                <div class="card">
+                  <div class="card__title loading"></div>
+                </div>
+              </div>  
+            </div>    
+            
+            <!--strong>No data found, please update items list.</strong-->
         </div>
       </table></div>
     </section>

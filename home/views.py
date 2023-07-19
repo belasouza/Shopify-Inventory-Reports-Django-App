@@ -74,7 +74,7 @@ def update_page(request):
     #items = placeholder(client)
     
     #update_database(items)
-    sleep(60)
+    #sleep(60)
     update_noi(random.randint(5,20))
 
     return redirect(index)
