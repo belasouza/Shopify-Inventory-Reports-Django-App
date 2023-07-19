@@ -29,7 +29,9 @@ def fetch_bulk(bulk_status):
         inv_data = urllib.request.urlopen(url)
         for line in inv_data:
             line = json.loads(line.decode('utf8'))
-            # if there are at least one item incoming...
+            # if there are at least one item incoming... -> CHANGE THIS TO ADD ALL ITEMS, then on query we will filter it
+            # maybe change it to line['inventoryLevel']['quantities'][0]['quantity'] != 0 -> incoming is not 0
+            # ORRR change fetch bulk according to request, add other variable like if incoming, do this, if available do that ??
             if line['inventoryLevel']['quantities'][1]['quantity'] > 0:
                 items.append(line) # get line
                 logging.info('Loading...')

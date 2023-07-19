@@ -7,7 +7,11 @@
       <div class="columns is-variable is-1">
         <div class="column is-one-fifth">
           <span class="tag is-info is-light">
-            Last updated on Month XXth, 2023
+            {% if date %}
+              Last updated on {{ date }}
+            {% else %}
+              No update found
+            {% endif %} 
           </span>
         </div>
         <!-- START of columns to make it align-->
@@ -22,7 +26,7 @@
           <a href="update_page"><button class="button is-light has-text-black">Update</button></a>
         </div>
         <div class="column">
-          <a href="download_file"><button class="button is-success">Export</button></a>
+          <a href="export_excel"><button class="button is-success">Export</button></a>
         </div>
         
       </div>

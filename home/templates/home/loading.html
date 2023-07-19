@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale = 1">
+  <title>{% block title %}Inventory Reports{% endblock %}</title>
+  <!-- Include the Bulma CSS framework for styling -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+</head>
+<style>
+    .loader-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: #fff;
+  opacity: 0;
+  z-index: -1;
+  transition: opacity 0.3s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 6px;
+
+  .loader {
+    height: 80px;
+    width: 80px;
+  }
+
+  &.is-active {
+    opacity: 1;
+    z-index: 1;
+  }
+}
+</style>
+<script>
+    function fun(){
+        $('.loader-wrapper').addClass('is-active');
+    }
+</script>
+<body class="has-background-light">
+    <section class="hero is-small is-success mb-4" >
+        <div class="hero-body ">
+            <p class="title is-4"><a href="{% url "root_path" %}">Inventory Reports</a></p>
+        </div>
+    </section>
+    <!-- begin div.main-->
+    <div class="container">
+  <section class="section is-small">
+    <h2 class="title has-background-light	has-text-black">Incoming items</h2>
+    <!--div class ="box">There are no products in your store.</div-->
+    <div class="block ">
+      <div class="columns is-variable is-1">
+        <div class="column is-one-fifth">
+          <span class="tag is-info is-light">
+            {% if date %}
+              Last updated on {{ date }}
+            {% else %}
+              No update found
+            {% endif %} 
+          </span>
+        </div>
+        <!-- START of columns to make it align-->
+        <div class="column is-half">
+          <p> </p>
+        </div>
+        <div class="column is-1">
+          <p> </p>
+        </div>
+        <!-- END of columns to make it align-->
+        <div class="column">
+          <a href="update_page"><button class="button is-light has-text-black">Update</button></a>
+        </div>
+        <div class="column">
+          <a href="export_excel"><button class="button is-success">Export</button></a>
+        </div>
+        
+      </div>
+      
+    </div>
+    <div class="box">
+        <div class="table-container">
+            <!--progress class="progress is-large is-info" max="100">60%</progress-->
+            <div class="loader-wrapper">
+                <div class="loader is-loading"></div>
+            </div>
+            <strong>No data found, please update items list.</strong>
+            <div class="has-text-centered">
+                <a class="button is-big" onclick="fun()">Call Loader</a>
+            </div>
+        </div>
+      </table></div>
+    </section>
+    <section class="section is-medium">
+  
+    </section>
+    
+</body>
+</html>

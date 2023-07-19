@@ -7,12 +7,19 @@ import mimetypes
 import os
 from django.http.response import HttpResponse
 from wsgiref.util import FileWrapper
-from home.models import Item
+
+import openpyxl
+from home.models import Item, NumUpdated
 
 from shopify_app.views import new_session
 
 from home.inventory_query import query_status, checking_status
 from home.fetching import is_done, items_op, get_locations, bulk_operation, get_data, filter_data
+from home.updating import update_database, update_noi
+#from django.utils import timezone
+#from datetime import timedelta
+
+import random
 
 # logging set-up
 import logging
@@ -31,22 +38,45 @@ def new_session():
 
     return shopify.Session(shop_url, api_version, admin_api_key)
 '''
+# Note: maybe either get all info, and only display what we want or do different requests you know?
+def loading(request):
+    n = NumUpdated.objects.first()
+    if n is None:
+        # set up default
+        logging.info("no update found")
+        return render(request, 'home/loading.html', {}) 
+    else:
+        return render(request, 'home/loading.html', {"date": n.updated_at})
 
 def index(request):
     # ssl._create_default_https_context = ssl._create_unverified_context
 
-    
+    # get today's items 
+    #today = timezone.now() - timedelta(days=1)
+    #items = Item.objects.filter(updated_at__gte=today) 
 
-    items = Item.objects.all() 
-    return render(request, 'home/incoming.html', {"items": items})
+    #one_hour_bef = timezone.now() - timedelta(hours=1)
+    #items = Item.objects.filter(updated_at__gte=one_hour_bef).order_by('sku')
+    n = NumUpdated.objects.first()
+    if n is None:
+        # set up default
+        logging.info("no update found")
+        return render(request, 'home/incoming.html', {}) 
+    else:
+        logging.info("last update found")
+        items = Item.objects.filter(incoming__lte=0).order_by('-updated_at')[:n.items_updated]
+        return render(request, 'home/incoming.html', {"items": items, "date": n.updated_at})
 
 
 def update_page(request):
     # start session
-#    client = new_session()
-#    items = placeholder(client)
-#    update_database(items)
+    #client = new_session()
+    #items = placeholder(client)
     
+    #update_database(items)
+    sleep(60)
+    update_noi(random.randint(5,20))
+
     return redirect(index)
     items = Item.objects.all()
     return render(request, 'home/incoming.html', {"items": items }) 
@@ -88,35 +118,6 @@ def placeholder(client): # should i add request?
     #    logging.info(html_table)
 
     #return html_table
-
-def get_item(s):
-    try:
-        found = Item.objects.get(sku=s)
-        return found
-    except Item.DoesNotExist:
-        return False
-
-def update_database(data):
-    new_items = []
-    for i,row in data.iterrows():
-        item = get_item(row['SKU'])
-        if item:
-            logging.info("Updating...")
-            item.incoming = int(row['Incoming'])
-            item.available = int(row['Available'])
-            item.save()
-        else: # need to add it to database
-            # add to tmp list
-            logging.info("Item needs to be added")
-            new_items.append(row)
-
-    if len(new_items) != 0: # if there are items to add
-        for item in new_items:
-            logging.info("Adding...")
-            new = Item.objects.create_item(item['SKU'],item['Incoming'], item['Available']) 
-            new.save()
-            logging.info("Added" + new.sku)
-    
     
             
 def get_html_table(df):
@@ -125,6 +126,39 @@ def get_html_table(df):
     fixed_t = t_1.replace('<tr style="text-align: right;">', '<tr>')
 
     return fixed_t
+
+#def export_incoming(request):
+#    export_excel(request, 'incoming')
+# maybe add queryset object??
+
+def export_excel(request):
+    n = NumUpdated.objects.first()
+    #if n is not None:
+
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename="inventoryExport.xlsx"'
+
+    workbook = openpyxl.Workbook()
+    worksheet = workbook.active
+    worksheet.title = 'Inventory'
+
+    # Write header row
+    header = ['SKU', 'Available', 'Incoming']
+    for col_num, column_title in enumerate(header, 1):
+        cell = worksheet.cell(row=1, column=col_num)
+        cell.value = column_title
+
+    # Write data rows
+    queryset = Item.objects.order_by('-updated_at').filter(incoming__gt=0)[:n.items_updated].values_list('sku', 'available','incoming')
+    
+    for row_num, row in enumerate(queryset, 1):
+        for col_num, cell_value in enumerate(row, 1):
+            cell = worksheet.cell(row=row_num+1, column=col_num)
+            cell.value = cell_value
+
+    workbook.save(response)
+
+    return response
 
 # from "How To Download A File On Button Click in Django Easy STEPS" - YouTube · Askari BaDshah
 # https://fedingo.com/how-to-download-file-in-django/
