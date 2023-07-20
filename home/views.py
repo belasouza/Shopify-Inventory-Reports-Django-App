@@ -77,7 +77,7 @@ def update_page(request):
     #sleep(60)
     update_noi(random.randint(5,20))
 
-    return redirect(index)
+    return redirect(loading)
     items = Item.objects.all()
     return render(request, 'home/incoming.html', {"items": items }) 
 
@@ -133,32 +133,35 @@ def get_html_table(df):
 
 def export_excel(request):
     n = NumUpdated.objects.first()
-    #if n is not None:
+    if n is not None:
 
-    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    response['Content-Disposition'] = 'attachment; filename="inventoryExport.xlsx"'
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename="inventoryExport.xlsx"'
 
-    workbook = openpyxl.Workbook()
-    worksheet = workbook.active
-    worksheet.title = 'Inventory'
+        workbook = openpyxl.Workbook()
+        worksheet = workbook.active
+        worksheet.title = 'Inventory'
 
-    # Write header row
-    header = ['SKU', 'Available', 'Incoming']
-    for col_num, column_title in enumerate(header, 1):
-        cell = worksheet.cell(row=1, column=col_num)
-        cell.value = column_title
+        # Write header row
+        header = ['SKU', 'Available', 'Incoming']
+        for col_num, column_title in enumerate(header, 1):
+            cell = worksheet.cell(row=1, column=col_num)
+            cell.value = column_title
 
-    # Write data rows
-    queryset = Item.objects.order_by('-updated_at').filter(incoming__gt=0)[:n.items_updated].values_list('sku', 'available','incoming')
+        # Write data rows
+        queryset = Item.objects.order_by('-updated_at').filter(incoming__gt=0)[:n.items_updated].values_list('sku', 'available','incoming')
     
-    for row_num, row in enumerate(queryset, 1):
-        for col_num, cell_value in enumerate(row, 1):
-            cell = worksheet.cell(row=row_num+1, column=col_num)
-            cell.value = cell_value
+        for row_num, row in enumerate(queryset, 1):
+            for col_num, cell_value in enumerate(row, 1):
+                cell = worksheet.cell(row=row_num+1, column=col_num)
+                cell.value = cell_value
 
-    workbook.save(response)
+        workbook.save(response)
 
-    return response
+        return response
+    else:
+        return redirect(index)
+
 
 # from "How To Download A File On Button Click in Django Easy STEPS" - YouTube · Askari BaDshah
 # https://fedingo.com/how-to-download-file-in-django/
