@@ -1,16 +1,15 @@
-Shopify Django App Example
+Inventory Reports Django App
 ==========================
 
-This project makes it easy to get a Shopify app up and running with
-[Django](https://www.djangoproject.com/) and the
-[Python Shopify API](https://github.com/shopify/shopify_python_api).
-
-This project  simply displays basic information about the shop's products
-and orders.
+This project makes it easy to export excel files from shopify inventory. 
 
 This project has the following structure
-- `shopify_app` an app which handles authentication (meant to be reusable)
-- `home` an app which contains the example code to demonstrate how to use the API (meant to be modified or replaced to create your Shopify App).
+- `home` - main app 
+  - `authentication.py`
+  - `fetching.py`
+  - `importing.py`
+  - `updating.py`
+  - `inventory_query.py`
 - `shopify_django_app` project files for serving this app.
 
 Get It Running
