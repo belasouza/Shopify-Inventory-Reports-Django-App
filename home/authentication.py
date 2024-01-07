@@ -7,11 +7,11 @@ def new_session():
     '''
 
     # get store details
-    shop_url = apps.get_app_config('shopify_app').SHOP_URL
-    admin_api_key = apps.get_app_config('shopify_app').TOKEN 
-    api_version = apps.get_app_config('shopify_app').SHOPIFY_API_VERSION
-    api_key = apps.get_app_config('shopify_app').SHOPIFY_API_KEY 
-    api_secret = apps.get_app_config('shopify_app').SHOPIFY_API_SECRET
+    shop_url = apps.get_app_config('home').SHOP_URL
+    admin_api_key = apps.get_app_config('home').TOKEN 
+    api_version = apps.get_app_config('home').SHOPIFY_API_VERSION
+    api_key = apps.get_app_config('home').SHOPIFY_API_KEY 
+    api_secret = apps.get_app_config('home').SHOPIFY_API_SECRET
     
     # set up and create session
     shopify.Session.setup(api_key=api_key, secret=api_secret)

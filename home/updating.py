@@ -1,4 +1,4 @@
-from home.models import Item, NumUpdated
+from home.models import Item, Update
 import logging
 from django.conf import settings
 fmt = getattr(settings, 'LOG_FORMAT', None)
@@ -13,19 +13,18 @@ def get_item(s):
     except Item.DoesNotExist:
         return False
 
-def create_update(n):
-    u = NumUpdated.objects.new_update(n)
+def create_update():
+    u = Update.objects.new_update()
     u.save()
-    logging.info("saved new NumUpdated object")
+    logging.info("saved new Update object")
 
-def update_noi(n): # update number of items
-    u = NumUpdated.objects.first()
+def save_update(): # update number of items
+    u = Update.objects.first()
     if u is None:
         logging.info("creating new NumUpdated object")
-        create_update(n)
+        create_update()
     else:
-        u.items_updated = n
-        u.save()
+        u.set_date_now()
         logging.info("updated NumUpdated object")
 
 def update_database(data):
@@ -39,7 +38,7 @@ def update_database(data):
             item.incoming = int(row['Incoming'])
             item.available = int(row['Available'])
             item.save()
-        else: # need to add it to database
+        elif row['SKU'] != '': # need to add it to database
             # add to tmp list
             logging.info("Item needs to be added")
             new_items.append(row)
@@ -52,6 +51,6 @@ def update_database(data):
             logging.info("Added" + new.sku)
     
     total_items = len(new_items) + len(cur_items_lst)
-    update_noi(total_items)
+    save_update()
 
     #return cur_items_lst

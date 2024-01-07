@@ -1,11 +1,4 @@
 import sqlite3 as lite
-import pandas as pd
-#import logging
-#from django.conf import settings
-#fmt = getattr(settings, 'LOG_FORMAT', None)
-#lvl = getattr(settings, 'LOG_LEVEL', logging.INFO)
-
-#ogging.basicConfig(format=fmt, level=lvl)
 
 # function that creates new itemInfo table if needed
 def new_table(cursor):

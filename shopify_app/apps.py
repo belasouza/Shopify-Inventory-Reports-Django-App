@@ -17,11 +17,13 @@ class ShopifyAppConfig(AppConfig):
     #   git update-index --assume-unchanged shopify_settings.py
     SHOP_URL = os.environ.get('SHOP_URL')
     TOKEN = os.environ.get('TOKEN')
-    #SHOPIFY_API_SECRET = os.environ.get('SHOPIFY_API_SECRET')
 
     # API_VERSION specifies which api version that the app will communicate with
     SHOPIFY_API_VERSION = os.environ.get('SHOPIFY_API_VERSION')
 
     # See http://api.shopify.com/authentication.html for available scopes
-    # to determine the permisssions your app will need.
+    # to determine the permissions your app will need.
     SHOPIFY_API_SCOPE = os.environ.get('SHOPIFY_API_SCOPE', 'read_products,read_orders').split(',')
+
+    SHOPIFY_API_KEY = os.environ.get('SHOPIFY_API_KEY')
+    SHOPIFY_API_SECRET = os.environ.get('SHOPIFY_API_SECRET')

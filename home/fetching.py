@@ -5,6 +5,8 @@ import json
 import shopify
 import logging
 from django.conf import settings
+from home.inventory_query import query_status 
+
 fmt = getattr(settings, 'LOG_FORMAT', None)
 lvl = getattr(settings, 'LOG_LEVEL', logging.INFO)
 
@@ -21,28 +23,10 @@ def get_locations():
         all_locs.append(loc)
   return all_locs
 
-def fetch_bulk(bulk_status):
-    items = []
-    # try block?
-    if bulk_status['data']['node']['status']=='COMPLETED':
-        url = bulk_status['data']['node']['url']
-        inv_data = urllib.request.urlopen(url)
-        for line in inv_data:
-            line = json.loads(line.decode('utf8'))
-            # if there are at least one item incoming... -> CHANGE THIS TO ADD ALL ITEMS, then on query we will filter it
-            # maybe change it to line['inventoryLevel']['quantities'][0]['quantity'] != 0 -> incoming is not 0
-            # ORRR change fetch bulk according to request, add other variable like if incoming, do this, if available do that ??
-            if line['inventoryLevel']['quantities'][1]['quantity'] > 0:
-                items.append(line) # get line
-                logging.info('Loading...')
-    iframe=pd.DataFrame.from_records(items)
-    return iframe
-
 def items_op(loc_id):
     query = '{ inventoryItems { edges { node { sku inventoryLevel(locationId:"' + loc_id + '"){ quantities(names:["available","incoming"]) { name quantity } } } } } }'
     return query
 
-# from the other video
 def bulk_operation(query):
     bulk_query="""
         mutation {{
@@ -62,18 +46,6 @@ def bulk_operation(query):
     """.format(query=query)
     return bulk_query
 
-def is_done(client, checking_query):
-    response = client.execute(checking_query)
-    if json.loads(response)['data']['currentBulkOperation']['status'] == "COMPLETED":
-        return True
-    else:
-        return False
-
-def bulk_status(client, bulk, status_query):
-    bulk_id = json.loads(bulk)['data']['bulkOperationRunQuery']['bulkOperation']['id']
-    status = json.loads(client.execute(status_query,{'id':bulk_id}))
-    return status
-
 def get_data(client, bulk, sq):
     status = bulk_status(client,bulk, sq)
 
@@ -86,6 +58,30 @@ def get_data(client, bulk, sq):
     logging.info(status)
     return fetch_bulk(status)
 
+def bulk_status(client, bulk, status_query):
+    bulk_id = json.loads(bulk)['data']['bulkOperationRunQuery']['bulkOperation']['id']
+    status = json.loads(client.execute(status_query,{'id':bulk_id}))
+    return status
+
+def fetch_bulk(bulk_status):
+    items = []
+    # try block?
+    if bulk_status['data']['node']['status']=='COMPLETED':
+        url = bulk_status['data']['node']['url']
+        inv_data = urllib.request.urlopen(url)
+        for line in inv_data:
+            line = json.loads(line.decode('utf8'))
+            # if there are at least one item incoming... -> CHANGE THIS TO ADD ALL ITEMS, then on query we will filter it
+            # maybe change it to line['inventoryLevel']['quantities'][0]['quantity'] != 0 -> incoming is not 0
+            # ORRR change fetch bulk according to request, add other variable like if incoming, do this, if available do that ??
+            logging.info(line)
+            if line['inventoryLevel'] != None:
+                #if line['inventoryLevel']['quantities'][1]['quantity'] > 0:
+                items.append(line) # get line
+                logging.info('Loading...')
+    iframe=pd.DataFrame.from_records(items)
+    return iframe
+    
 def filter_data(data):
     # get quantities column
     df = pd.json_normalize(data['inventoryLevel'])
@@ -116,3 +112,36 @@ def filter_data(data):
 
     # rename column
     return df.rename(columns={"sku":"SKU"})
+
+def fetching_manager(client): 
+    # get locations using that get_locs function and passing session variable
+    locs = get_locations()
+    loc_id = " "
+    # find the one that is 'Main Location'
+    for l in locs:
+        logging.info(l)
+        if(l.attributes['name'] == 'Main Location'):
+            # get its id
+            logging.info('get its id')
+            loc_id = l.attributes['admin_graphql_api_id']
+            logging.info(loc_id)
+            
+        # create query hardcoding the location id in it
+        if(loc_id != " "):
+            inv_query = items_op(loc_id)
+            logging.info(inv_query)
+        # call the bulk_query
+            bulk_query = bulk_operation(inv_query)
+            logging.info(bulk_query)
+            bulk = client.execute(bulk_query)
+            logging.info(bulk)
+        # call get_data (which gets the data once the status is COMPLETED)
+            data = get_data(client, bulk, query_status)
+            logging.info("got the data!!")
+        # filter data?
+            data = filter_data(data)
+            logging.info(data)
+        # generate excel file -> df to xlsx
+            
+            # update table       
+            return data

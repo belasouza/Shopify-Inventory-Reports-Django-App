@@ -5,7 +5,6 @@ from . import views
 
 def shop_login_required(fn):
     def wrapper(request, *args, **kwargs):
-        # HERE IS PART OF THE PROBLEM !!!! HOW TO CHECK IF OPEN SESS
         if not hasattr(request, 'session') or 'shopify' not in request.session:
             request.session['return_to'] = request.get_full_path()
             return redirect(reverse(views.custom_app_login))

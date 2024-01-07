@@ -17,13 +17,14 @@ class Item(models.Model):
         return self.sku
 
 class UpdateManager(models.Manager):
-    def new_update(self, n):
-        update = self.create(items_updated=n)
+    def new_update(self):
+        update = self.create()
         return update
     
-class NumUpdated(models.Model):
-    items_updated = models.IntegerField()
+class Update(models.Model):
     updated_at = models.DateField(auto_now=True)
     objects = UpdateManager()
     def __str__(self):
         return str(self.updated_at)
+    def set_date_now(self):
+       self.updated_at = models.DateField(auto_now=True) 
