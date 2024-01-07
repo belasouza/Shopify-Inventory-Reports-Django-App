@@ -1,6 +1,6 @@
 import sqlite3 as lite
 
-# function that creates new itemInfo table if needed
+# new_table creates new itemInfo table if needed
 def new_table(cursor):
     tb_query = """CREATE TABLE IF NOT EXISTS itemInfo (
                   SKU VARCHAR(15),
@@ -9,19 +9,19 @@ def new_table(cursor):
     
     cursor.execute(tb_query)
 
-# function to check if item is in database
+# exists_item checks if item is in database
 def exists_item(cursor, sku):
     query = ("""SELECT SKU FROM itemInfo WHERE SKU = ?;""")
     cursor.execute(query, [(sku)])
     return cursor.fetchone() is not None
 
-# function to insert item into the table
+# insert_items inserts item into the table
 def insert_item(cursor, sku, available, incoming):
     query = ("""INSERT INTO itemInfo (SKU, Incoming, Available)
                 VALUES(?,?,?);""")
     cursor.execute(query, (sku, incoming, available))
 
-# function that updates the inventory levels
+# update_levels updates the inventory levels
 def update_levels(cursor, sku, available, incoming):
     query = ("""UPDATE itemInfo
                 SET Incoming=?,
@@ -29,16 +29,12 @@ def update_levels(cursor, sku, available, incoming):
                 WHERE SKU=?;""")
     cursor.execute(query, (incoming, available, sku))
 
-# function that updates the items already on the database 
+# update_items updates the items already on the database 
 # and adds the ones that aren't yet
 def update_items(items):
     # connect to database
     con = lite.connect('inventoryInfo.db')
-    # logging.info("Opened database")
     print("Opened database")
-
-    # check if table exists
-        # if not -> create table
 
     # cursor
     cur = con.cursor()
@@ -53,15 +49,10 @@ def update_items(items):
             # add to tmp df
             print("Item needs to be added")
             new_items.append(row)
-    # commit changes
-    #connection.commit() 
     
     if len(new_items) != 0: # if there are items to add
         for item in new_items:
             print("Adding...")
             insert_item(cur, item['SKU'], item['Available'], item['Incoming']) 
-        #connection.commit()
 
-    # HOW TO DELETE THE ONES THAT HAVEN'T BEEN UPDATED??
-    # OR SUPPRESS THEM FROM SHOWING UP???
     con.close()
