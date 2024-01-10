@@ -116,6 +116,6 @@ def fetching_manager(client):
             bulk = client.execute(bulk_query)
         # call get_data (which gets the data once the status is COMPLETED)
             data = get_data(client, bulk, query_status)
-        # filter data?
+        # clean data
             data = clean_data(data)       
             return data
