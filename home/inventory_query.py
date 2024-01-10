@@ -25,26 +25,7 @@ query bulkStatus($id:ID!){
 }
 """
 
-#actually will need to use gql module to add the locationId correctly !!
-invItems_query = """
-{
-    inventoryItems {
-    edges {
-        node {
-        sku
-        inventoryLevel(locationId:"gid://shopify/Location/36462395441"){
-            quantities(names: ["available","incoming"]) {
-              name
-              quantity
-            }
-        }
-        }
-    }
-    }
-}
-"""
-
-inv_lev_query = '''
+inv_lev_query = """
 query ($item_id: ID!) {
     inventoryLevel(id:$item_id ) {
         id
@@ -64,9 +45,9 @@ query ($item_id: ID!) {
         }
     }
 }
-'''
+"""
 
-individual_inv_levels = '''
+individual_inv_levels = """
 query($id: ID!, $loc: ID!) {
     inventoryItem(id: $id) {
         inventoryLevel(locationId: $loc){
@@ -77,4 +58,4 @@ query($id: ID!, $loc: ID!) {
         }
     }
 }
-'''
+"""
