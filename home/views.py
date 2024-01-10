@@ -12,8 +12,7 @@ from home.authentication import new_session
 from home.fetching import fetching_manager
 from home.updating import update_database
 
-# helper functions
-# views
+
 def index(request):
     return render(request, 'home/homepage.html') 
 
