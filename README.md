@@ -4,9 +4,9 @@ Inventory Reports Django App
 This project makes it easy to export excel files from shopify inventory. 
 
 This project has the following structure
-- `home` - main app 
-  - `authentication.py`
-  - `fetching.py`
+- `home` (main app)
+  - `authentication.py` sets up a Shopify API session and graphQL client
+  - `fetching.py` 
   - `importing.py`
   - `updating.py`
   - `inventory_query.py`
