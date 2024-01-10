@@ -57,19 +57,17 @@ def bulk_status(client, bulk, status_query):
 
 def fetch_bulk(bulk_status):
     items = []
-    # try block?
     if bulk_status['data']['node']['status']=='COMPLETED':
         url = bulk_status['data']['node']['url']
         inv_data = urllib.request.urlopen(url)
         for line in inv_data:
             line = json.loads(line.decode('utf8'))
             if line['inventoryLevel'] != None:
-                #if line['inventoryLevel']['quantities'][1]['quantity'] > 0:
                 items.append(line) # get line
     iframe=pd.DataFrame.from_records(items)
     return iframe
     
-def filter_data(data):
+def clean_data(data):
     # get quantities column
     df = pd.json_normalize(data['inventoryLevel'])
     
@@ -119,8 +117,5 @@ def fetching_manager(client):
         # call get_data (which gets the data once the status is COMPLETED)
             data = get_data(client, bulk, query_status)
         # filter data?
-            data = filter_data(data)
-        # generate excel file -> df to xlsx
-            
-            # update table       
+            data = clean_data(data)       
             return data
