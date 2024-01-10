@@ -34,7 +34,6 @@ def update_levels(cursor, sku, available, incoming):
 def update_items(items):
     # connect to database
     con = lite.connect('inventoryInfo.db')
-    print("Opened database")
 
     # cursor
     cur = con.cursor()
@@ -43,16 +42,13 @@ def update_items(items):
 
     for i,row in items.iterrows():
         if exists_item(cur, row['SKU']):
-            print("Updating...")
             update_levels(cur,row['Available'], row['Incoming'], row['SKU'])
         else: # need to add it to database
             # add to tmp df
-            print("Item needs to be added")
             new_items.append(row)
     
     if len(new_items) != 0: # if there are items to add
         for item in new_items:
-            print("Adding...")
             insert_item(cur, item['SKU'], item['Available'], item['Incoming']) 
 
     con.close()
