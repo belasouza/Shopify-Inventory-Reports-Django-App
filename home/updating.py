@@ -43,5 +43,3 @@ def update_database(data):
     
     total_items = len(new_items) + len(cur_items_lst)
     save_update()
-
-    #return cur_items_lst
