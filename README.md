@@ -60,13 +60,13 @@ Inside the python interpreter, generate the secret key, copy it, and exit:
 
 ### Run the App
 
-  1. With the `.env` already created in the root directory, build the docker containter:
+  1. With the `.env` already created in the root directory, build the docker image:
 
   ```
   docker-compose build
   ```
-  (you will only have to do it once)
-  2. Run the container
+  
+  2. Run the container:
   ```
   docker-compose up
   ```
