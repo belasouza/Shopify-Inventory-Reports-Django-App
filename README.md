@@ -1,15 +1,13 @@
 Inventory Reports Django App
 ==========================
 
-This project makes it easy to export excel files from shopify inventory. 
+This project makes it easy to export Excel files from Shopify inventory. 
 
 This project has the following structure
 - `home` (main app)
   - `authentication.py` sets up a Shopify API session and graphQL client
-  - `fetching.py` 
-  - `importing.py`
-  - `updating.py`
-  - `inventory_query.py`
+  - `fetching.py` handles the API calls and stores the responses in a Python data frame
+  - `updating.py` updates/creates the SQLite database using the data frame from 'fetching.py'
 - `shopify_django_app` project files for serving this app.
 
 Get It Running
@@ -19,17 +17,23 @@ Get It Running
 - Log in to your [partners dashboard](https://partners.shopify.com/)
 - Navigate to [your apps](https://partners.shopify.com/current/apps)
 - Click `Create App`
-- Choose a custom app or public app
+- Choose a custom app
 - Fill in the app name
-- Set the Application Url http://localhost:8000/
-- Set Whitelisted redirection URL( http://localhost:8000/shopify/finalize/
 
-You will then have access to your API key and API secret KEY, you will need these
+- Log in to your test store
+- Navigate to Settings
+- Click `Create Custom App`
+- Update API scope
+- Get the app token 
+
+You will then have access to your admin token, API key and API secret KEY, you will need these
 for the next steps.
 
 ### Setup Environment
 
-1. Copy over the `.env.local` file into a `.env` file and fill out the `SHOPIFY_API_KEY` and `SHOPIFY_API_SECRET` fields
+1. Copy over the `.env.local` file into a `.env` file and fill out the `SHOPIFY_API_KEY`, `SHOPIFY_API_SECRET`, `TOKEN`, `SHOP_URL` and `SHOPIFY_API_VERSION` fields
+  * `SHOP_URL` is in the form of `https://<STORENAME>.myshopify.com/admin/api/<API VERSION>`
+  * `SHOPIFY_API_VERSION` is one of `2024-01, 2023-10, 2023-07, 2023-04, 2023-01, 2022-10, 2022-07, 2022-04, 2022-01`
 ```
 cp .env.local .env
 ```
@@ -54,22 +58,17 @@ Inside the python interpreter, generate the secret key, copy it, and exit:
 ```
 
 
-3. [Optional] you can add the api version and api scopes environment variables to the `.env` file:
-
-  * `SHOPIFY_API_VERSION` default is `unstable`
-
-  * `SHOPIFY_API_SCOPE` a comma-separated list of scopes, default is `read_products,read_orders`
-
-
 ### Run the App
 
-We use [pipenv](https://github.com/pypa/pipenv) to get running faster. With the
-`.env` already created in the root directory, run the app:
+  1. With the `.env` already created in the root directory, build the docker containter:
 
-```
-pipenv install
-pipenv run python manage.py migrate
-pipenv run python manage.py runserver
-```
+  ```
+  docker-compose build
+  ```
+  (you will only have to do it once)
+  2. Run the container
+  ```
+  docker-compose up
+  ```
 
 Open <http://localhost:8000> in your browser to view the example.
