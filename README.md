@@ -1,7 +1,7 @@
 Inventory Reports Django App
 ==========================
 
-This project makes it easy to export Excel files from Shopify inventory. 
+This project makes it easy to check inventory and _export_ inventory levels as an Excel file from a Shopify shop.
 
 This project has the following structure:
 - `home` (main app)
