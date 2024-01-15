@@ -9,6 +9,8 @@ This project has the following structure:
   - `fetching.py` handles the API calls and stores the responses in a Python data frame
   - `updating.py` updates/creates the SQLite database using the data frame from 'fetching.py'
 - `shopify_django_app` project files for serving this app.
+### Demo
+![](https://github.com/belasouza/Shopify-Inventory-Reports-Django-App/blob/main/demo.gif)
 
 Get It Running
 --------------
