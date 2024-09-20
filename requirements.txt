@@ -2,9 +2,9 @@ asgiref==3.2.10
 Django>=3.2.25
 pyactiveresource==2.2.2
 pytz==2020.1
-PyYAML==5.3.1
+PyYAML>=5.4
 ShopifyAPI==12.3.0
 six==1.15.0
-sqlparse==0.3.1
+sqlparse>=0.5.0
 openpyxl==3.1.0
 pandas==2.1.2
